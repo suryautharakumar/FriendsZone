@@ -1342,7 +1342,7 @@
             });
 
 
-            $('.big-slide-button').wrapInner('<a href="#" class="project-url"><p class="bsb-link"><p></a>')
+            $('.big-slide-button').wrapInner('<a href="#" target="_blank" class="project-url"><p class="bsb-link"><p></a>')
             $('.big-slide-button .project-url').prepend('<span></span><span></span><span></span><span></span>')
 
             $('.bsb-link').wrapInner('<wrap></wrap>');
