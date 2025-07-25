@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Friends Zone - Cakes & Desserts</title>
+    <meta name="description" content="Friends Zone is a collection of cakes and desserts that brings joy to every occasion.">
+    <meta name="author" content="Friends Zone">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="logoa.png">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background: url('asset/imgs/works/full/1.jpg') no-repeat;
+      background-size: cover;
+      background-position: center;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .headerz {
+      text-align: center;
+      margin: 20px;
+      position: relative;
+      width: 100%;
+    }
+
+    .headerz h1,  .headerz p{
+        color: #746079;
+    }
+
+    .menu-icon {
+      position: absolute;
+      top: 15px;
+      right: 14px;
+      font-size: 25px;
+      cursor: pointer;
+      /* z-index: 2000; */
+    }
+
+    .overlay-menu {
+      display: none;
+      position: fixed;
+      z-index: 1500;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.95);
+      color: white;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px 20px;
+    }
+
+    .overlay-menu img {
+      max-width: 200px;
+    }
+
+    .overlay-menu .home-btn {
+      padding: 12px 24px;
+      font-size: 18px;
+      background: #c62828;
+      border: none;
+      border-radius: 30px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .overlay-menu .contact-info {
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .overlay-close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      width: 90%;
+      max-width: 1200px;
+      margin-bottom: 40px;
+    }
+
+    .menu-card {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .menu-card:hover {
+      transform: scale(1.02);
+    }
+
+    .footer {
+      /* background-color: #000; */
+      color: #000;
+      width: 100%;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .footer-bottom {
+      padding-top: 15px;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      max-width: 90%;
+      max-height: 80vh;
+    }
+
+    .modal-controls {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 40px;
+      color: white;
+      background-color: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .arrow.left { left: 20px; }
+    .arrow.right { right: 20px; }
+
+    @media (max-width: 600px) {
+      .footer-bottom { font-size: 14px; }
+      .overlay-menu .contact-info { font-size: 14px; }
+      .overlay-menu .home-btn { font-size: 16px; padding: 10px 20px; }
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Modal Logic
+      const images = document.querySelectorAll('.menu-card');
+      const modal = document.createElement('div');
+      modal.classList.add('modal');
+      modal.innerHTML = `
+        <span class="modal-controls" id="closeModal">&times;</span>
+        <div class="arrow left" id="prevImage">&#10094;</div>
+        <img class="modal-content" id="modalImage" src="" alt="">
+        <div class="arrow right" id="nextImage">&#10095;</div>
+      `;
+      document.body.appendChild(modal);
+
+      const modalImage = document.getElementById('modalImage');
+      const closeModal = document.getElementById('closeModal');
+      const nextImage = document.getElementById('nextImage');
+      const prevImage = document.getElementById('prevImage');
+      let currentIndex = 0;
+
+      function showModal(index) {
+        currentIndex = index;
+        modalImage.src = images[currentIndex].src;
+        modal.style.display = 'flex';
+      }
+
+      function closeModalView() {
+        modal.style.display = 'none';
+      }
+
+      function showNext() {
+        currentIndex = (currentIndex + 1) % images.length;
+        modalImage.src = images[currentIndex].src;
+      }
+
+      function showPrev() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        modalImage.src = images[currentIndex].src;
+      }
+
+      images.forEach((img, index) => {
+        img.addEventListener('click', () => showModal(index));
+      });
+
+      closeModal.addEventListener('click', closeModalView);
+      nextImage.addEventListener('click', showNext);
+      prevImage.addEventListener('click', showPrev);
+
+      document.addEventListener('keydown', (e) => {
+        if (modal.style.display === 'flex') {
+          if (e.key === 'ArrowRight') showNext();
+          if (e.key === 'ArrowLeft') showPrev();
+          if (e.key === 'Escape') closeModalView();
+        }
+      });
+
+      // Overlay Menu Logic
+      const overlay = document.createElement('div');
+      overlay.classList.add('overlay-menu');
+      overlay.innerHTML = `
+        <span class="overlay-close" id="closeOverlay">&times;</span>
+        <img src="logoa.png" alt="Logo">
+        <button class="home-btn" onclick="window.location.href='index.html'">Home</button>
+        <div class="contact-info">
+          <p>+91 96298 50443</p>
+          <p>friendszone@gmail.com</p>
+          <p>Coimbatore</p>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+//  fa-solid fa-person-from-portal
+
+      const menuBtn = document.createElement('div');
+      menuBtn.classList.add('menu-icon');
+      menuBtn.innerHTML = '<i style="color: #000 ;" title="Home" class="fa-solid fa-person-from-portal"></i>';
+      document.querySelector('.headerz').appendChild(menuBtn);
+
+      const closeOverlay = overlay.querySelector('#closeOverlay');
+
+      menuBtn.addEventListener('click', () => {
+        location.href= ('index.html');
+      });
+
+      closeOverlay.addEventListener('click', () => {
+        overlay.style.display = 'none';
+      });
+    });
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+        <link
+        rel="stylesheet"
+        href="https://site-assets.fontawesome.com/releases/v7.0.0/css/fontawesome.css"
+      >
+            <link
+        rel="stylesheet"
+        href="https://site-assets.fontawesome.com/releases/v7.0.0/css/solid.css"
+      >
+               <link
+        rel="stylesheet"
+        href="https://site-assets.fontawesome.com/releases/v7.0.0/css/brands.css"
+      >
+</head>
+<style>
+
+.loader-wrap {
+    position: fixed;
+    z-index: 10;
+    height: 100vh;
+    width: 100%;
+    left: 0;
+    top: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    overflow: hidden;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    background: transparent;
+    z-index: 99999999999999;
+}
+
+.loader-wrap svg {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 110vh;
+    fill: #1a1a1a;
+}
+
+.loader-wrap .loader-wrap-heading .load-text {
+    font-size: 25px;
+    font-weight: 200;
+    letter-spacing: 15px;
+    text-transform: uppercase;
+    color: #fff;
+    z-index: 20;
+}
+
+.load-text span {
+    -webkit-animation: loading 1s infinite alternate;
+    animation: loading 1s infinite alternate;
+}
+
+.load-text span:nth-child(1) {
+    -webkit-animation-delay: 0s;
+    animation-delay: 0s;
+}
+
+.load-text span:nth-child(2) {
+    -webkit-animation-delay: 0.1s;
+    animation-delay: 0.1s;
+}
+
+.load-text span:nth-child(3) {
+    -webkit-animation-delay: 0.2s;
+    animation-delay: 0.2s;
+}
+
+.load-text span:nth-child(4) {
+    -webkit-animation-delay: 0.3s;
+    animation-delay: 0.3s;
+}
+
+.load-text span:nth-child(5) {
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+}
+
+.load-text span:nth-child(6) {
+    -webkit-animation-delay: 0.5s;
+    animation-delay: 0.5s;
+}
+
+.load-text span:nth-child(7) {
+    -webkit-animation-delay: 0.6s;
+    animation-delay: 0.6s;
+}
+
+@-webkit-keyframes loading {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes loading {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* sd */
+
+
+@media screen and (max-width: 992px) {
+    
+    .loader-wrap svg {
+        width: 200vw;
+        left: -50vw;
+    }
+}
+
+@media screen and (max-width: 768px) {
+   
+    .loader-wrap .loader-wrap-heading .load-text {
+        letter-spacing: 5px;
+        font-size: 13px;
+    }
+}
+
+#sticky-container {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      background-color: #e6dfcd;
+      padding: 3px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 9; 
+    }
+
+    #social-icons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .social-icon {
+      margin-bottom: 15px;
+      color: #746079;
+      font-size: 20px
+    }
+
+</style>
+<body>
+        <div id="sticky-container">
+        <div id="social-icons">
+            <a href="index.html" class="social-icon" title="Home">
+                <i class="fa-solid fa-house-heart"></i>
+            </a>
+            <a href="https://wa.me/9629850443?text=Hi,%20" title="Whatsapp" target="_blank" class="social-icon">
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
+            <a href="https://www.instagram.com/friendszone_desserts_cbe?igsh=aXRhOWY5cTliaW52" title="Instagram" target="_blank" class="social-icon">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://maps.app.goo.gl/v6pyoZUtqgxDtBqj6" title="Get Location" target="_blank" class="social-icon">
+                <i class="fa-solid fa-location-dot"></i>
+            </a>
+        </div>
+      </div>
+
+        <div class="loader-wrap">
+        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+            <path id="svg" d="M0,1005S175,995,500,995s500,5,500,5V0H0Z"></path>
+        </svg>
+
+        <div class="loader-wrap-heading">
+            <div class="load-text">
+                <span>F</span>
+                <span>R</span>
+                <span>I</span>
+                <span>E</span>
+                <span>N</span>
+                <span>D</span>
+                <span>S</span>
+                <span></span>
+                <span>Z</span>
+                <span>O</span>
+                <span>N</span>
+                <span>E</span>
+            </div>
+        </div>
+    </div>
+
+  <header class="headerz">
+    <h1>Friends Zone</h1>
+    <p>Cakes & Desserts</p>
+  </header>
+
+  <main class="menu-grid">
+    <img src="menu.png" alt="Tasty Plates Logo" class="menu-card">
+    <img src="menu.png" alt="Juice & Shakes" class="menu-card">
+    <img src="menu.png" alt="Starters & Fries" class="menu-card">
+    <img src="menu.png" alt="Burgers, Maggi & Pasta" class="menu-card">
+    <img src="menu.png" alt="Sandwiches, Wrap & Mojito" class="menu-card">
+    <img src="menu.png" alt="Desserts & Croissants" class="menu-card">
+  </main>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <p style="color: #000;"> © <script>document.write(new Date().getFullYear())</script> <a href="index.html" style="color: #000; text-decoration: none; font-weight: 600;">Friends & Co.</a> All Rights Reserved</p>
+    </div>
+  </footer>
+
+      <script>
+        var stickyContainer = document.getElementById('sticky-container');
+        stickyContainer.style.opacity = 1;
+    </script>
+
+    <script src="asset/js/jquery-3.6.0.min.js"></script>
+    <script src="asset/js/jquery-migrate-3.4.0.min.js"></script>
+
+    <!-- plugins -->
+    <script src="asset/js/plugins.js"></script>
+
+    <!-- <script src="asset/js/ScrollTrigger.min.js"></script> -->
+
+    <!-- custom scripts -->
+    <script src="asset/js/scripts.js"></script>
+
+</body>
+</html>
